@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SockShop - Магазин стильных носков</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f8f9fa;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme {
+            --primary-color: #ff8a8a;
+            --secondary-color: #5fdfD7;
+            --text-color: #f8f9fa;
+            --bg-color: #222;
+            --card-bg: #333;
+            --border-color: #444;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-icon {
+            font-size: 1.5rem;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .cart-bounce {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .theme-switch {
+            width: 60px;
+            height: 30px;
+            background-color: #555;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .theme-switch::after {
+            content: '☀️';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .dark-theme .theme-switch::after {
+            content: '🌙';
+            transform: translateX(30px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-image: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-height: 400px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .product-desc {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+        }
+
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 350px;
+            max-width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            box-shadow: -5px 0 15px var(--shadow-color);
+            transition: right 0.3s;
+            z-index: 1000;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .cart-modal.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .cart-items {
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+            padding-left: 1rem;
+        }
+
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-price {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-quantity {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            width: 25px;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .quantity-input {
+            width: 40px;
+            height: 25px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            margin: 0 5px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-align: right;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .checkout-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        footer {
+            background-color: var(--card-bg);
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .products {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            
+            .cart-modal {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .product-info {
+                padding: 1rem;
+            }
+            
+            .product-title {
+                font-size: 1rem;
+            }
+            
+            .product-price {
+                font-size: 1.1rem;
+            }
+            
+            .product-desc {
+                font-size: 0.8rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+            
+            .theme-switch {
+                width: 50px;
+                height: 25px;
+            }
+            
+            .theme-switch::after {
+                width: 21px;
+                height: 21px;
+            }
+            
+            .dark-theme .theme-switch::after {
+                transform: translateX(25px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cart-modal {
+                padding: 1rem;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+            }
+            
+            .cart-item-img {
+                width: 100%;
+                height: auto;
+                margin-bottom: 0.5rem;
+            }
+            
+            .cart-item-info {
+                padding-left: 0;
+            }
+            
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .product-img {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">SockShop</div>
+        <div class="nav-right">
+            <div class="theme-switch" id="themeSwitch"></div>
+            <div class="cart-icon" id="cartIcon">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Добро пожаловать в SockShop!</h1>
+            <p>Выбери свою пару стильных и комфортных носков</p>
+            <img src="/api/placeholder/800/400" alt="Коллекция носков">
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="products" id="productsContainer">
+            <!-- Продукты будут добавлены через JavaScript -->
+        </div>
+    </section>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h2>Корзина</h2>
+            <button class="cart-close" id="cartClose">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Здесь будут элементы корзины -->
+        </div>
+        <div class="cart-total" id="cartTotal">
+            Итого: 0 ₽
+        </div>
+        <div class="checkout-form">
+            <div class="form-group">
+                <label class="form-label" for="name">Ваше имя</label>
+                <input type="text" id="name" class="form-input" placeholder="Иван Иванов">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="phone">Номер телефона</label>
+                <input type="tel" id="phone" class="form-input" placeholder="+7 (XXX) XXX-XX-XX">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="address">Адрес доставки</label>
+                <input type="text" id="address" class="form-input" placeholder="г. Москва, ул. Пушкина, д. 1">
+            </div>
+        </div>
+        <button class="btn btn-secondary" id="orderBtn">Оформить заказ в WhatsApp</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <footer>
+        <p>&copy; 2025 SockShop - Магазин качественных носков</p>
+    </footer>
+
+    <script>
+        // Данные о продуктах
+        const products = [
+            {
+                id: 1,
+                title: "Классические черные носки",
+                price: 299,
+                description: "Удобные носки из 100% хлопка. Подходят для повседневной носки и официальных мероприятий.",
+                image: "/api/placeholder/300/300"
+            },
+            {
+                id: 2,
+                title: "Яркие разноцветные носки",
+                price: 399,
+                description: "Стильные носки с яркими узорами. Поднимут настроение вам и окружающим!",
+                image: "/api/placeholder/301/300"
+            },
+            {
+                id: 3,
+                title: "Спортивные носки",
+                price: 449,
+                description: "Специальные носки для спорта с амортизацией и вентиляцией. Идеальны для тренировок.",
+                image: "/api/placeholder/302/300"
+            },
+            {
+                id: 4,
+                title: "Теплые зимние носки",
+                price: 599,
+                description: "Теплые носки из шерсти мериноса. Сохранят ваши ноги в тепле даже в самые холодные дни.",
+                image: "/api/placeholder/303/300"
+            },
+            {
+                id: 5,
+                title: "Носки с забавными принтами",
+                price: 499,
+                description: "Веселые носки с различными принтами. Отличный подарок для друзей и близких.",
+                image: "/api/placeholder/304/300"
+            }
+        ];
+
+        // Корзина
+        let cart = [];
+        let isDarkTheme = false;
+
+        // DOM элементы
+        const productsContainer = document.getElementById('productsContainer');
+        const cartIcon = document.getElementById('cartIcon');
+        const cartCount = document.getElementById('cartCount');
+        const cartModal = document.getElementById('cartModal');
+        const cartClose = document.getElementById('cartClose');
+        const overlay = document.getElementById('overlay');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const orderBtn = document.getElementById('orderBtn');
+        const themeSwitch = document.getElementById('themeSwitch');
+
+        // Предотвращение скролла при открытой корзине на мобильных устройствах
+        function toggleBodyScroll(disable) {
+            if (disable) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Отображение продуктов
+        function displayProducts() {
+            productsContainer.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-price">${product.price} ₽</p>
+                        <p class="product-desc">${product.description}</p>
+                        <button class="btn add-to-cart" data-id="${product.id}">В корзину</button>
+                    </div>
+                `;
+                
+                productsContainer.appendChild(productCard);
+            });
+            
+            // Добавление обработчиков событий для кнопок "В корзину"
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+        }
+
+        // Добавление товара в корзину
+        function addToCart(event) {
+            const productId = parseInt(event.target.getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            cartBounceAnimation();
+        }
+
+        // Анимация "подпрыгивания" иконки корзины
+        function cartBounceAnimation() {
+            cartCount.classList.add('cart-bounce');
+            setTimeout(() => {
+                cartCount.classList.remove('cart-bounce');
+            }, 500);
+        }
+
+        // Обновление счетчика товаров в корзине
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = count;
+        }
+
+        // Отображение содержимого корзины
+        function displayCartItems() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Ваша корзина пуста</p>';
+                cartTotal.textContent = 'Итого: 0 ₽';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <h4 class="cart-item-title">${item.title}</h4>
+                        <p class="cart-item-price">${item.price} ₽</p>
+                        <div class="cart-quantity">
+                            <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                            <input type="number" class="quantity-input" value="${item.quantity}" min="1" data-id="${item.id}">
+                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                        </div>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = `Итого: ${total} ₽`;
+            
+            // Добавление обработчиков событий для кнопок изменения количества
+            document.querySelectorAll('.minus').forEach(button => {
+                button.addEventListener('click', decreaseQuantity);
+            });
+            
+            document.querySelectorAll('.plus').forEach(button => {
+                button.addEventListener('click', increaseQuantity);
+            });
+            
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', updateQuantity);
+            });
+        }
+
+        // Увеличение количества товара
+        function increaseQuantity(event) {
+            const productId = parseInt(event.target.getAttribute('data-id'));
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += 1;
+                updateCartCount();
+                displayCartItems();
+            }
+        }
+
+        // Уменьшение количества товара
+        function decreaseQuantity(event) {
+            const productId = parseInt(event.target.getAttribute('data-id'));
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity -= 1;
+                
+                if (item.quantity <= 0) {
+                    cart = cart.filter(cartItem => cartItem.id !== productId);
+                }
+                
+                updateCartCount();
+                displayCartItems();
+            }
+        }
+
+        // Обновление количества товара через поле ввода
+        function updateQuantity(event) {
+            const productId = parseInt(event.target.getAttribute('data-id'));
+            const newQuantity = parseInt(event.target.value);
+            
+            if (newQuantity <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            } else {
+                const item = cart.find(item => item.id === productId);
+                if (item) {
+                    item.quantity = newQuantity;
+                }
+            }
+            
+            updateCartCount();
+            displayCartItems();
+        }
+
+        // Открытие модального окна корзины
+        function openCart() {
+            cartModal.classList.add('active');
+            overlay.classList.add('active');
+            toggleBodyScroll(true);
+            displayCartItems();
+        }
+
+        // Закрытие модального окна корзины
+        function closeCart() {
+            cartModal.classList.remove('active');
+            overlay.classList.remove('active');
+            toggleBodyScroll(false);
+        }
+
+        // Оформление заказа через WhatsApp
+        function checkout() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            
+            if (!name || !phone || !address) {
+                alert('Пожалуйста, заполните все поля формы');
+                return;
+            }
+            
+            let message = `Здравствуйте! Меня зовут ${name}. Хочу сделать заказ:\n\n`;
+            
+            cart.forEach(item => {
+                message += `${item.title} - ${item.quantity} шт. по ${item.price} ₽\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            message += `\nИтого: ${total} ₽\n`;
+            message += `\nАдрес доставки: ${address}\n`;
+            message += `Телефон: ${phone}`;
+            
+            // Кодируем сообщение для URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Открываем WhatsApp с предзаполненным сообщением
+            window.open(`https://wa.me/89098445932?text=${encodedMessage}`, '_blank');
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            
+            if (isDarkTheme) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        // Обработка изменения размера экрана
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                // Если экран большой и корзина открыта, не блокируем скролл
+                if (cartModal.classList.contains('active')) {
+                    document.body.style.overflow = '';
+                }
+            } else {
+                // Если экран маленький и корзина открыта, блокируем скролл
+                if (cartModal.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+        }
+
+        // Инициализация
+        function init() {
+            displayProducts();
+            
+            // Обработчики событий
+            cartIcon.addEventListener('click', openCart);
+            cartClose.addEventListener('click', closeCart);
+            overlay.addEventListener('click', closeCart);
+            orderBtn.addEventListener('click', checkout);
+            themeSwitch.addEventListener('click', toggleTheme);
+            window.addEventListener('resize', handleResize);
+            
+            // Фикс для iOS
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+            window.addEventListener('resize', () => {
+                document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+            });
+        }
+
+        // Запуск приложения
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
